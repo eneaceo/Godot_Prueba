@@ -8,14 +8,16 @@ var card_number: int = 0
 enum STATES {
 	onDeck,
 	onMovingToHand,
+	onMovingToAI,
+	onMovingToCenter,
 	onPlayerHand,
+	onAIHand,
 	onMouse,
 	onPlayed
 	}
 	
 var state = STATES.onDeck
 
-signal finish_draw_card
 var start_position : Vector2 = Vector2.ZERO
 var target_position : Vector2 = Vector2.ZERO
 var time : float = 0
@@ -65,12 +67,26 @@ func _physics_process(delta: float) -> void:
 			pass
 		STATES.onMovingToHand:
 			time = time + delta
-			rect_position = lerp(start_position, target_position, time)
+			rect_position = lerp(start_position, target_position, time * 2)
 			if rect_position == target_position :
 				$CardBack.visible = false
 				time = 0
 				state = STATES.onPlayerHand
 				Global.play_scene.update_player_cards_position()
+		STATES.onMovingToAI:
+			time = time + delta
+			rect_position = lerp(start_position, target_position, time * 2)
+			if rect_position == target_position :
+				time = 0
+				state = STATES.onAIHand
+				Global.play_scene.update_ai_cards_position()
+		STATES.onMovingToCenter:
+			time = time + delta
+			rect_position = lerp(start_position, target_position, time * 2)
+			if rect_position == target_position :
+				$CardBack.visible = false
+				time = 0
+				state = STATES.onPlayed
 		STATES.onPlayerHand:
 			if mouse:
 				$Background/Border.border_color = Color(1,0.5,0,1)
@@ -80,7 +96,7 @@ func _physics_process(delta: float) -> void:
 				$Background/Border.border_color = Color(1,1,1,1)
 				if rect_scale != scale :
 					rect_scale = lerp(rect_scale, scale, delta * 8)
-			if Input.is_action_just_pressed("left_click") and mouse:
+			if Input.is_action_just_pressed("left_click") and mouse and Global.play_scene.player_turn:
 				last_position = rect_position
 				rect_scale = scale
 				$Background/Border.border_color = Color(1,1,1,1)
@@ -94,6 +110,11 @@ func _physics_process(delta: float) -> void:
 					mouse = false
 					rect_position = last_position
 					state = STATES.onPlayerHand
+
+func reset_card() -> void :
+	$CardBack.visible = true
+	mouse = false
+	state = STATES.onDeck
 
 func set_position_in_scene(position : Vector2) -> void:
 	rect_position = position

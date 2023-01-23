@@ -2,8 +2,6 @@ extends Node2D
 
 const CardBase = preload("res://scenes/Card.tscn")
 
-signal empty_deck
-
 const _colors: Array = ["Red", "Blue", "Green", "Yellow"]
 const _special: Array = ["skip"]
 const _min_number : int = 0
@@ -23,10 +21,10 @@ func _init() -> void:
 
 func draw_Card():
 	if _deck.size() > 0 :
-		if _deck.size() == 1 :
-			emit_signal("empty_deck")
 		return _deck.pop_back()
 
 func deck_Size() -> int :
 	return _deck.size()
 
+func add_card_to_deck(card) -> void :
+	_deck.append(card)
