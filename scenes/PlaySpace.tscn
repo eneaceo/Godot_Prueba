@@ -107,6 +107,21 @@ root_node = NodePath("../DeckPlacement")
 anims/DeckEmpty = SubResource( 1 )
 anims/UNO = SubResource( 2 )
 
+[node name="Win" type="PopupDialog" parent="."]
+modulate = Color( 0.0117647, 1, 0.792157, 1 )
+margin_left = 415.0
+margin_top = 243.0
+margin_right = 863.0
+margin_bottom = 465.0
+
+[node name="WinText" type="RichTextLabel" parent="Win"]
+margin_left = 119.0
+margin_top = 89.0
+margin_right = 186.0
+margin_bottom = 105.0
+rect_scale = Vector2( 3, 3 )
+text = "TEST TEST"
+
 [connection signal="mouse_entered" from="CardPlacement/CardPlacementButton" to="." method="_on_CardPlacementButton_mouse_entered"]
 [connection signal="mouse_exited" from="CardPlacement/CardPlacementButton" to="." method="_on_CardPlacementButton_mouse_exited"]
 [connection signal="pressed" from="DeckPlacement/DeckPlacementButton" to="." method="_on_DeckPlacementButton_pressed"]

@@ -45,7 +45,7 @@ func _ready() -> void:
 	$Background/AIHandPosition.position = Vector2(get_viewport().size.x/2 - card_size.x/2, -card_size.y * 0.25)
 	$UNO.rect_scale = uno_button_default_scale
 	$UNO.disabled = true
-	
+	$PlayedCards.z_index = 1
 	# Start game - Draw first card
 	Deck.init()
 	
@@ -100,6 +100,7 @@ func try_to_put_card(number : int, color: String) -> bool:
 func play_card(card, player: bool) -> void:
 	played_cards.append(card)
 	last_card_played = card
+	print("Played Card : " + String(card.number) + " " + card.color)
 	if player : 
 		player_draw_cards -= 1
 		$PlayerCards.remove_child(card)
@@ -203,6 +204,12 @@ func ai_start_turn() -> void :
 
 func finish_game() -> void:
 	game_finished = true
+	$PlayedCards.z_index = 0
+	if $PlayerCards.get_child_count() == 0:
+		$Win/WinText.set_text("YOU WIN")
+	else :
+		$Win/WinText.set_text("YOU LOSE")
+	$Win.popup()
 	print("GAME FINISHED")
 	if !$UnoTimer.is_stopped():
 		stop_uno_timer()
