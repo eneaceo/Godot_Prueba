@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://scripts/PlaySpace.gd" type="Script" id=1]
 [ext_resource path="res://assets/Background.jpg" type="Texture" id=2]
@@ -10,17 +10,22 @@
 [sub_resource type="Animation" id=1]
 resource_name = "DeckEmpty"
 loop = true
+
+[sub_resource type="Animation" id=2]
+resource_name = "UNO"
+length = 2.0
+loop = true
 tracks/0/type = "value"
-tracks/0/path = NodePath("DeckPlacementButton:rect_scale")
+tracks/0/path = NodePath("../UNO:rect_scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 0.5, 1 ),
-"transitions": PoolRealArray( 1, 1, 1 ),
+"times": PoolRealArray( 0, 1, 2 ),
+"transitions": PoolRealArray( 1, 1, 0.535889 ),
 "update": 0,
-"values": [ Vector2( 0.2, 0.2 ), Vector2( 0.3, 0.3 ), Vector2( 0.2, 0.2 ) ]
+"values": [ Vector2( 0.1, 0.1 ), Vector2( 0.15, 0.15 ), Vector2( 0.1, 0.1 ) ]
 }
 
 [node name="PlaySpace" type="Node2D"]
@@ -74,13 +79,10 @@ margin_left = 43.0
 margin_top = -56.0
 margin_right = 529.0
 margin_bottom = 703.0
-rect_scale = Vector2( 0.348302, 0.348302 )
+rect_scale = Vector2( 0.2, 0.2 )
 action_mode = 0
 texture_normal = ExtResource( 3 )
 script = ExtResource( 4 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="DeckPlacement"]
-anims/DeckEmpty = SubResource( 1 )
 
 [node name="UNO" type="TextureButton" parent="."]
 margin_left = 1059.0
@@ -89,6 +91,21 @@ margin_right = 2259.0
 margin_bottom = 1166.0
 rect_scale = Vector2( 0.1, 0.1 )
 texture_normal = ExtResource( 5 )
+
+[node name="UnoTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="AITimer" type="Timer" parent="."]
+
+[node name="AuxAITimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="UnoAnimation" type="AnimationPlayer" parent="."]
+root_node = NodePath("../DeckPlacement")
+anims/DeckEmpty = SubResource( 1 )
+anims/UNO = SubResource( 2 )
 
 [connection signal="mouse_entered" from="CardPlacement/CardPlacementButton" to="." method="_on_CardPlacementButton_mouse_entered"]
 [connection signal="mouse_exited" from="CardPlacement/CardPlacementButton" to="." method="_on_CardPlacementButton_mouse_exited"]
