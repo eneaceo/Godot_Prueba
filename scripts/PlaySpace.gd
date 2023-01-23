@@ -92,7 +92,7 @@ func play_card(card, player: bool) -> void:
 			add_child(uno_timer)
 			uno_timer.start()
 		if $PlayerCards.get_child_count() == 0:
-			print("Winner")
+			get_tree().change_scene("res://scenes/Menu.tscn")
 		else:
 			ai_turn()
 	else :
@@ -108,7 +108,7 @@ func play_card(card, player: bool) -> void:
 			add_child(uno_timer)
 			uno_timer.start()
 		if $PlayerCards.get_child_count() == 0:
-			print("AI Winner")
+			get_tree().change_scene("res://scenes/Menu.tscn")
 		card.state = card.STATES.onMovingToCenter
 	$PlayedCards.add_child(card)
 	player_turn = !player_turn
