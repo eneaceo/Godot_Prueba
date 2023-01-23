@@ -8,6 +8,8 @@ var card_size : Vector2 = Vector2.ZERO
 var center_cards_position : Vector2 = Vector2.ZERO
 
 var uno_button_default_scale : Vector2 = Vector2(0.1, 0.1)
+var player_uno: bool = false
+var ai_uno : bool = false
 
 var player_turn : bool = true
 var game_finished : bool = false
@@ -74,6 +76,9 @@ func draw_card(num : int, player : bool) -> void :
 		refill_deck()
 	var card_draw
 	if player :
+		if player_uno:
+			player_uno = false
+			stop_uno_timer()
 		for i in num:
 			player_draw_cards += 1
 			card_draw = Deck.draw_card()
@@ -83,6 +88,9 @@ func draw_card(num : int, player : bool) -> void :
 			card_draw.state = card_draw.STATES.onMovingToHand
 			print ("Card Draw: " + String(card_draw.number) + " " + card_draw.color)
 	else :
+		if ai_uno:	
+			ai_uno = false
+			stop_uno_timer()
 		for i in num:
 			ai_draw_cards += 1
 			card_draw = Deck.draw_card()
@@ -157,7 +165,12 @@ func check_if_uno() -> void :
 		$UNO.disabled = false
 		$UnoAnimation.play("UNO")
 		$UnoTimer.start()
-		
+		if player_turn:
+			player_uno = true
+			ai_uno = false
+		else:
+			player_uno = false
+			ai_uno = true
 		
 func check_if_special_card_played() -> String :
 	if last_card_played.number == -1 :
@@ -195,9 +208,9 @@ func ai_start_turn() -> void :
 			played_card = true
 			break
 	if !played_card:
-		draw_card(1, false)
 		if !$UnoTimer.is_stopped() and $AICards.get_child_count() == 1:
 			stop_uno_timer()
+		draw_card(1, false)
 		player_turn = !player_turn
 
 # FINISH GAME ##########################################################
@@ -276,7 +289,7 @@ func _on_CardPlacementButton_mouse_exited() -> void:
 func _on_UNO_pressed() -> void:
 	print("UNO -> Player Pressed")
 	stop_uno_timer()
-	if $AICards.get_child_count() == 1:
+	if $AICards.get_child_count() == 1 and ai_uno:
 		draw_card(2, false)
 
 # TIMERS ##########################################################
@@ -284,5 +297,5 @@ func _on_UNO_pressed() -> void:
 func ai_uno_pressed() -> void:
 	print("UNO -> AI Pressed")
 	stop_uno_timer()
-	if $PlayerCards.get_child_count() == 1:
+	if $PlayerCards.get_child_count() == 1 and player_uno:
 		draw_card(2, true)

@@ -3,6 +3,7 @@ extends Node2D
 const card_base = preload("res://scenes/Card.tscn")
 
 const _colors: Array = ["Red", "Blue", "Green", "Yellow"]
+
 const _special: Array = ["Skip"]
 const _min_number : int = 0
 const _max_number : int = 9
