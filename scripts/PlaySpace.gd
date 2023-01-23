@@ -123,15 +123,16 @@ func play_card(card, player: bool) -> void:
 	
 	check_if_game_finished()
 	check_if_uno()
-	var check : String = check_if_special_card_played()
+	var check_special : String = check_if_special_card_played()
 	
-	match(check):
+	# If the last player has only one card we wait to see if the button is pressed 
+	match(check_special):
 		"Skip":
 			if !player_turn and !game_finished:
 				if $UnoTimer.is_stopped():
 					ai_turn()
 				else :
-					$AuxAITimer.start()
+					$AuxAITimer.start() 
 		_:
 			player_turn = !player_turn
 			if !player_turn and !game_finished:
@@ -139,7 +140,7 @@ func play_card(card, player: bool) -> void:
 					ai_turn()
 				else :
 					$AuxAITimer.start()
-		
+
 
 
 func refill_deck():
@@ -160,6 +161,7 @@ func check_if_game_finished() -> void :
 		finish_game()
 
 
+# Check last player to put a card
 func check_if_uno() -> void :
 	if $PlayerCards.get_child_count() == 1  and player_turn or $AICards.get_child_count() == 1 and !player_turn:
 		$UNO.disabled = false
@@ -172,6 +174,7 @@ func check_if_uno() -> void :
 			player_uno = false
 			ai_uno = true
 		
+
 func check_if_special_card_played() -> String :
 	if last_card_played.number == -1 :
 		print("Special Card Played: " + last_card_played.special)
@@ -187,6 +190,7 @@ func check_if_can_play_card() -> bool :
 			break
 	return played_card
 	
+	
 func stop_uno_timer() -> void :
 		$UnoAnimation.stop(true)
 		$UNO.rect_scale = uno_button_default_scale
@@ -199,6 +203,7 @@ func ai_turn() -> void :
 	$AuxAITimer.stop()
 	$AITimer.start()
 	
+	
 func ai_start_turn() -> void :
 	$AITimer.stop()
 	var played_card : bool = false
@@ -208,8 +213,6 @@ func ai_start_turn() -> void :
 			played_card = true
 			break
 	if !played_card:
-		if !$UnoTimer.is_stopped() and $AICards.get_child_count() == 1:
-			stop_uno_timer()
 		draw_card(1, false)
 		player_turn = !player_turn
 
@@ -270,8 +273,6 @@ func update_cards_in_hand_position (player : bool) -> void :
 
 func _on_DeckPlacementButton_pressed() -> void:
 	if player_turn and !game_finished and !check_if_can_play_card():
-		if !$UnoTimer.is_stopped() and $PlayerCards.get_child_count() == 1:
-			stop_uno_timer()
 		print("Deck size: " + String(Deck.deck_size()))
 		draw_card(1, true)
 		player_turn = !player_turn
@@ -289,6 +290,9 @@ func _on_CardPlacementButton_mouse_exited() -> void:
 func _on_UNO_pressed() -> void:
 	print("UNO -> Player Pressed")
 	stop_uno_timer()
+	if !$AuxAITimer.is_stopped():
+		$AuxAITimer.stop()
+		ai_turn()
 	if $AICards.get_child_count() == 1 and ai_uno:
 		draw_card(2, false)
 
